@@ -28,7 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentWrapper = document.querySelector('.tabcontent');
     const tabWrapper = document.querySelector('.tabheader__items');
     const tabItems = tabWrapper.querySelectorAll('.tabheader__item');
+    const offers = document.querySelectorAll('.offer__slide');
+    const currentSlide = document.querySelector('#current');
+    const days = document.querySelector('#days');
+    const hours = document.querySelector('#hours');
+    const minutes = document.querySelector('#minutes');
+    const seconds = document.querySelector('#seconds');
+    const connectUs = document.querySelector('.btn');
+    const modal = document.querySelector('.modal');
+    const modalClose = document.querySelector('.modal__close');
 
+    // Tabs, Content, Choise of style
     const handleContentHide = (element) => {
         element.classList.add('hide');
         element.classList.remove('show', 'fade');
@@ -43,11 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const imageElem = parent.querySelector('img');
         const descriptionElem = parent.querySelector('.tabcontent__descr');
         handleContentHide(parent);
-        
+
         imageElem.src = image;
         descriptionElem.textContent = description;
         handleContentShow(parent);
-        
     };
 
     const handleTabClick = (e) => {
@@ -57,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tab.classList.remove('tabheader__item_active');
             });
             tabItems.forEach((tab, i) => {
-                if(target === tab) {
+                if (target === tab) {
                     target.classList.add('tabheader__item_active');
                     handleTabContent(tabContent[i], contentWrapper);
                 }
@@ -65,11 +74,80 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Offers Slider
+    const offersHide = () => {
+        offers.forEach((offer) => {
+            offer.classList.add('hide');
+            offer.classList.remove('show', 'fade');
+        });
+    };
+
+    const offerMove = (i) => {
+        offersHide();
+        offers[i].classList.add('show', 'fade');
+        offers[i].classList.remove('hide');
+    };
+
+    const offerSlide = (init) => {
+        let offerInterval;
+        let i = init;
+
+        offerInterval = setInterval(() => {
+            offerMove(i);
+            currentSlide.textContent = '0' + (i + 1);
+            i++;
+            if (i === 4) {
+                i = 0;
+            }
+        }, 3000);
+    };
+
+    // Offer Timer
+    const offerOn = () => {
+        const offerEnd = new Date('2021-02-15');
+        const secTimer = () => {
+            const sec = new Date();
+            const offerLeft = new Date(offerEnd-sec);
+            days.textContent = offerLeft.getDate();
+            hours.textContent = offerLeft.getHours();
+            minutes.textContent = offerLeft.getMinutes();
+            seconds.textContent = offerLeft.getSeconds();
+            if((offerEnd-sec) === 0) {
+                clearInterval(offerTimer);
+            }
+        };
+
+        const offerTimer = setInterval(secTimer, 1000);
+    };
+
+    const modalView = () => {
+        console.log('enter');
+        if(modal.style.display === 'none') {
+            modal.style.display = 'block';
+            console.log('enter if');
+        }
+    }; 
+
+    const handleModalClose = (e) => {
+        if(e.target === modal || e.target === modalClose ) {
+            modal.style.display = 'none';
+        }
+    };
+    
+    
     tabWrapper.addEventListener('click', (e) => handleTabClick(e));
+    connectUs.addEventListener('click', modalView);
+    modalClose.addEventListener('click', handleModalClose);
+    modal.addEventListener('click', (e) => handleModalClose(e));
 
 
     handleTabContent(tabContent[0], contentWrapper);
+    offersHide();
+    offers[0].classList.remove('hide');
+    currentSlide.textContent = '01';
 
+    offerSlide(1);
+    offerOn();
 
 
 

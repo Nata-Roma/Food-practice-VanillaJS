@@ -1,5 +1,3 @@
-
-
 (function () {
     'use strict';
 }());
@@ -23,6 +21,8 @@ const tabContent = [
     },
 ];
 
+const deadline = '2021-02-15';
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const contentWrapper = document.querySelector('.tabcontent');
@@ -30,13 +30,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabItems = tabWrapper.querySelectorAll('.tabheader__item');
     const offers = document.querySelectorAll('.offer__slide');
     const currentSlide = document.querySelector('#current');
-    const days = document.querySelector('#days');
-    const hours = document.querySelector('#hours');
-    const minutes = document.querySelector('#minutes');
-    const seconds = document.querySelector('#seconds');
-    const connectUs = document.querySelector('.btn');
+
+    const orderForm = document.querySelector('.order__form');
+    const orderName = orderForm.querySelector('input[name="name"]');
+    const orderPhone = orderForm.querySelector('input[name="phone"]');
+
+    const connectUs = document.querySelectorAll('[data-modal]');
     const modal = document.querySelector('.modal');
-    const modalClose = document.querySelector('.modal__close');
+    const modalClose = modal.querySelector('.modal__close');
+    const modalForm = modal.querySelector('form');
+    const modalName = modalForm.querySelector('input[name="name"]');
+    const modalPhone = modalForm.querySelector('input[name="phone"]');
+    const btnSubmit = document.querySelectorAll('[data-submit]');
+
 
     // Tabs, Content, Choise of style
     const handleContentHide = (element) => {
@@ -103,58 +109,116 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Offer Timer
-    const offerOn = () => {
-        const offerEnd = new Date('2021-02-15');
+    const getTime = (offerEnd) => {
+        const currentTime = new Date();
+        const offerLeft = new Date(offerEnd - currentTime);
+        const daysLeft = offerLeft.getDate();
+        const hoursLeft = offerLeft.getHours();
+        const minutesLeft = offerLeft.getMinutes();
+        const secondsLeft = offerLeft.getSeconds();
+
+        return {
+            currentTime,
+            daysLeft,
+            hoursLeft,
+            minutesLeft,
+            secondsLeft,
+        };
+    };
+
+    const timerNumbers = (num) => {
+        if (num >= 10) {
+            return num;
+        }
+        return `0${num}`;
+    };
+
+    const offerOn = (offerDeadline) => {
+        const offerEnd = new Date(offerDeadline);
+        const days = document.querySelector('#days');
+        const hours = document.querySelector('#hours');
+        const minutes = document.querySelector('#minutes');
+        const seconds = document.querySelector('#seconds');
+
         const secTimer = () => {
-            const sec = new Date();
-            const offerLeft = new Date(offerEnd-sec);
-            days.textContent = offerLeft.getDate();
-            hours.textContent = offerLeft.getHours();
-            minutes.textContent = offerLeft.getMinutes();
-            seconds.textContent = offerLeft.getSeconds();
-            if((offerEnd-sec) === 0) {
+            const { currentTime, daysLeft, hoursLeft, minutesLeft, secondsLeft } = getTime(offerEnd);
+
+            days.textContent = timerNumbers(daysLeft);
+            hours.textContent = timerNumbers(hoursLeft);
+            minutes.textContent = timerNumbers(minutesLeft);
+            seconds.textContent = timerNumbers(secondsLeft);
+
+            if ((offerEnd - currentTime) <= 0) {
                 clearInterval(offerTimer);
             }
         };
-
+        secTimer();
         const offerTimer = setInterval(secTimer, 1000);
     };
 
+
+    // inputs fields and modal
     const modalView = () => {
-        console.log('enter');
-        if(modal.style.display === 'none') {
-            modal.style.display = 'block';
-            console.log('enter if');
-        }
-    }; 
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        // clearTimeout(modalTimeout);
+    };
+
+    const restorePage = () => {
+        modal.classList.add('hide');
+        modal.classList.remove('show');
+        modalForm.reset();
+        document.body.style.overflow = '';
+    };
 
     const handleModalClose = (e) => {
-        if(e.target === modal || e.target === modalClose ) {
-            modal.style.display = 'none';
+        if (e.target === modal || e.target === modalClose || e.key === 'Escape' || e.key === 'Esc') {
+            restorePage();
         }
     };
-    
-    
+
+    // Forms submit
+    const submitForm = (e) => {
+        e.preventDefault();
+        orderForm.reset();
+        restorePage();
+    };
+
+    // Open Modal if page bottom
+
+    const modalAsPageBottom = () => {
+        const scrollMax = document.documentElement.scrollHeight;
+        const scrollCurrent = window.pageYOffset + document.documentElement.clientHeight;
+        if (scrollCurrent >= scrollMax) {
+            modalView();
+            window.removeEventListener('scroll', modalAsPageBottom);
+        }
+    };
+
+    // Events
     tabWrapper.addEventListener('click', (e) => handleTabClick(e));
-    connectUs.addEventListener('click', modalView);
-    modalClose.addEventListener('click', handleModalClose);
+
+    connectUs.forEach((button) => {
+        button.addEventListener('click', modalView);
+    });
+    btnSubmit.forEach((button) => {
+        button.addEventListener('click', (e) => submitForm(e));
+    });
     modal.addEventListener('click', (e) => handleModalClose(e));
+    document.addEventListener('keyup', (e) => handleModalClose(e));
+    modalClose.addEventListener('click', handleModalClose);
+    window.addEventListener('scroll', modalAsPageBottom);
+    
 
 
+    // Initial render
     handleTabContent(tabContent[0], contentWrapper);
     offersHide();
     offers[0].classList.remove('hide');
     currentSlide.textContent = '01';
 
     offerSlide(1);
-    offerOn();
-
-
-
-
-
-
-
-
+    offerOn(deadline);
 
 });

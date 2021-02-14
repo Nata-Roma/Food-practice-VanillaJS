@@ -47,6 +47,12 @@ const cardContent = [
 
 const deadline = '2021-02-15';
 
+const statusMessage = {
+    loading: 'Loading...',
+    success: 'Thank you! We will connect to you soon',
+    failure: 'Something goes wrong',
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const contentWrapper = document.querySelector('.tabcontent');
@@ -55,17 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const offers = document.querySelectorAll('.offer__slide');
     const currentSlide = document.querySelector('#current');
 
-    const orderForm = document.querySelector('.order__form');
-    const orderName = orderForm.querySelector('input[name="name"]');
-    const orderPhone = orderForm.querySelector('input[name="phone"]');
+    const forms = document.querySelectorAll('form');
+    // const orderName = document.querySelector('input[name="name"]');
+    // const orderPhone = document.querySelector('input[name="phone"]');
 
     const connectUs = document.querySelectorAll('[data-modal]');
     const modal = document.querySelector('.modal');
     const modalClose = modal.querySelector('.modal__close');
-    const modalForm = modal.querySelector('form');
-    const modalName = modalForm.querySelector('input[name="name"]');
-    const modalPhone = modalForm.querySelector('input[name="phone"]');
-    const btnSubmit = document.querySelectorAll('[data-submit]');
+    // const modalForm = modal.querySelector('form');
+    // const modalName = document.querySelector('input[name="name"]');
+    // const modalPhone = document.querySelector('input[name="phone"]');
 
     const cardContainer = document.querySelector('.menu__field .container');
 
@@ -230,28 +235,69 @@ document.addEventListener('DOMContentLoaded', () => {
         // clearTimeout(modalTimeout);
     };
 
-    const restorePage = () => {
+    const restorePagefromModal = () => {
         modal.classList.add('hide');
         modal.classList.remove('show');
-        modalForm.reset();
         document.body.style.overflow = '';
     };
 
     const handleModalClose = (e) => {
         if (e.target === modal || e.target === modalClose || e.key === 'Escape' || e.key === 'Esc') {
-            restorePage();
+            restorePagefromModal();
         }
     };
 
     // Forms submit
-    const submitForm = (e) => {
-        e.preventDefault();
-        orderForm.reset();
-        restorePage();
+    const postData = (form) => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const warningMessage = document.createElement('div');
+            warningMessage.style.textAlign = 'center';
+            warningMessage.style.marginTop = '20px';
+            warningMessage.style.marginBottom = '-38px';
+            form.parentElement.append(warningMessage);
+
+            warningMessage.textContent = statusMessage.loading;
+            
+            const request = new XMLHttpRequest();
+            request.open('POST', '/server.php');
+
+            // !!! Do not declare Headers if FormData using
+            // request.setRequestHeader('Content-type', 'multipart/form-data');
+
+            // !!! Use it for json formats
+            request.setRequestHeader('Content-type', 'application/json');
+
+            const formData = new FormData(form);
+            const toJsonObject = {};
+
+            formData.forEach((value, key) => {
+                toJsonObject[key] = value;
+            });
+
+            // use it if not JSON format
+            // request.send(formData);
+
+            request.send(JSON.stringify(toJsonObject));
+
+            
+            request.addEventListener('load', () => {
+                if(request.status === 200) {
+                    warningMessage.textContent = statusMessage.success;
+                    console.log(request.response);
+                } else {
+                    warningMessage.textContent = statusMessage.failure;
+                }
+                setTimeout(() => {
+                    warningMessage.remove();
+                }, 2000);
+            });
+            form.reset();
+        });
     };
 
-    // Open Modal if page bottom
 
+    // Open Modal if page bottom
     const modalAsPageBottom = () => {
         const scrollMax = document.documentElement.scrollHeight;
         const scrollCurrent = window.pageYOffset + document.documentElement.clientHeight;
@@ -267,16 +313,11 @@ document.addEventListener('DOMContentLoaded', () => {
     connectUs.forEach((button) => {
         button.addEventListener('click', modalView);
     });
-    btnSubmit.forEach((button) => {
-        button.addEventListener('click', (e) => submitForm(e));
-    });
     modal.addEventListener('click', (e) => handleModalClose(e));
     document.addEventListener('keyup', (e) => handleModalClose(e));
     modalClose.addEventListener('click', handleModalClose);
     window.addEventListener('scroll', modalAsPageBottom);
-
-    
-    
+    forms.forEach((form) => postData(form));
     
     // Initial render
     handleTabContent(tabContent[0], contentWrapper);

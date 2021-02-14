@@ -21,6 +21,30 @@ const tabContent = [
     },
 ];
 
+const cardContent = [
+    {
+        title: 'Фитнес',
+        image: 'img/tabs/vegy.jpg',
+        alt: 'vegy',
+        description: 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        price: 8.50,
+    },
+    {
+        title: 'Премиум',
+        image: 'img/tabs/elite.jpg',
+        alt: 'elite',
+        description: 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+        price: 20,
+    },
+    {
+        title: 'Постное',
+        image: 'img/tabs/post.jpg',
+        alt: 'post',
+        description: 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+        price: 16,
+    },
+];
+
 const deadline = '2021-02-15';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,7 +67,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalPhone = modalForm.querySelector('input[name="phone"]');
     const btnSubmit = document.querySelectorAll('[data-submit]');
 
+    const cardContainer = document.querySelector('.menu__field .container');
 
+    class CardRender {
+        constructor({title, image, alt, description, price}, parent) {
+            this.title = title;
+            this.image = image;
+            this.alt = alt;
+            this.description = description;
+            this.price = price;
+            this.parent = parent;
+            this.currencyRate = 27;
+            this.changeCurrency();
+        }
+        changeCurrency() {
+            this.price = Math.floor((this.currencyRate * this.price));
+        }
+        cardRender() {
+            const element = document.createElement('div');
+            element.classList.add("menu__item");
+
+            element.innerHTML =  `
+                    <img src=${this.image} alt=${this.alt}}>
+                    <h3 class="menu__item-subtitle">Меню "${this.title}"</h3>
+                    <div class="menu__item-descr">${this.description}</div>
+                    <div class="menu__item-divider"></div>
+                    <div class="menu__item-price">
+                        <div class="menu__item-cost">Цена:</div>
+                        <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                    </div>
+            `;
+            this.parent.append(element);
+        }
+    }
+
+    const cardRenderBlock = () => {
+
+        for( let i = 0; i < 3; i++) {
+            new CardRender(cardContent[i], cardContainer).cardRender();
+        }
+    };
+
+    
     // Tabs, Content, Choise of style
     const handleContentHide = (element) => {
         element.classList.add('hide');
@@ -209,15 +274,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keyup', (e) => handleModalClose(e));
     modalClose.addEventListener('click', handleModalClose);
     window.addEventListener('scroll', modalAsPageBottom);
+
     
-
-
+    
+    
     // Initial render
     handleTabContent(tabContent[0], contentWrapper);
     offersHide();
     offers[0].classList.remove('hide');
     currentSlide.textContent = '01';
-
+    cardRenderBlock();
+    
     offerSlide(1);
     offerOn(deadline);
 

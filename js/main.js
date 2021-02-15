@@ -404,16 +404,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     modal.addEventListener('click', (e) => handleModalClose(e));
     document.addEventListener('keyup', (e) => handleModalClose(e));
-    // modalClose.addEventListener('click', handleModalClose);
     window.addEventListener('scroll', modalAsPageBottom);
     forms.forEach((form) => postData(form));
     
     // Initial render
 
-    fetch('/js/db.json')
+    fetch('http://localhost:3000/menu')
     .then((response) => response.json())
     .then((data) => {
-        const cardContent = [...data.menu];
+        const cardContent = [...data];
+        console.log(data);
         cardRenderBlock(cardContent);
     }).catch((err) => {
         console.error('Card content could not be downloaded ', err);

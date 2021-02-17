@@ -60,10 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabItems = tabWrapper.querySelectorAll('.tabheader__item');
     const offers = document.querySelectorAll('.offer__slide');
     const currentSlide = document.querySelector('#current');
+    const totalSlide = document.querySelector('#total');
+    const buttonLeft = document.querySelector('.offer__slider-prev'); 
+    const buttonRight = document.querySelector('.offer__slider-next');
     const forms = document.querySelectorAll('form');
     const connectUs = document.querySelectorAll('[data-modal]');
     const modal = document.querySelector('.modal');
     const cardContainer = document.querySelector('.menu__field .container');
+
+    // Cards rendering
     class CardRender {
         constructor({title, image, alt, description, price}, parent) {
             this.title = title;
@@ -161,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let offerInterval;
         let i = init;
 
+        totalSlide.textContent = '0' + offers.length;
         offerInterval = setInterval(() => {
             offerMove(i);
             currentSlide.textContent = '0' + (i + 1);
@@ -169,6 +175,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 i = 0;
             }
         }, 3000);
+    };
+
+    const clickedSlider = (init) => {
+        let i = init;
+        buttonLeft.addEventListener('click', () => {
+            if(!i) {
+                i = offers.length - 1;
+            } else {
+                i--;
+            }
+            offerMove(i);
+            currentSlide.textContent = '0' + (i + 1);
+        });
+        buttonRight.addEventListener('click', () => {
+            if(i >= offers.length - 1) {
+                i = 0;
+            } else {
+                i++;
+            }
+            offerMove(i);
+            currentSlide.textContent = '0' + (i + 1);
+        });
     };
 
     // Offer Timer
@@ -250,6 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Forms submit
+
     // const postData = (form) => {
     //     const showSendResponse = (message) => {
     //         const modalDialog = document.querySelector('.modal__dialog');
@@ -321,6 +350,19 @@ document.addEventListener('DOMContentLoaded', () => {
         
     // };
 
+    const postDataToServer = async(url, data) => {
+         // !!! Do not declare headers if FormData using
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: data
+        });
+
+        return await response.json();
+    };
+
     const postData = (form) => {
         const showSendResponse = (message) => {
             const modalDialog = document.querySelector('.modal__dialog');
@@ -351,23 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             form.insertAdjacentElement('afterend', warningMessage);
 
-
-            // !!! Do not declare headers if FormData using
-           
             const formData = new FormData(form);
-            const toJsonObject = {};
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            formData.forEach((value, key) => {
-                toJsonObject[key] = value;
-            });
-
-            fetch('/server.php', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json',
-                },
-                body: JSON.stringify(toJsonObject)
-            }).then((response) => response.text())
+            postDataToServer('http://localhost:3000/requests', json)
             .then((data) => {
                 console.log(data);
                 modalView();
@@ -385,6 +414,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const getDataFromServer = async(url) => {
+        const response = await fetch(url);
+
+        if(!response.ok) {
+            throw new Error(`Could not fetch ${url}, status: ${response.status}`);
+        }
+
+        return await response.json();
+    };
 
     // Open Modal if page bottom
     const modalAsPageBottom = () => {
@@ -409,8 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initial render
 
-    fetch('http://localhost:3000/menu')
-    .then((response) => response.json())
+    getDataFromServer('http://localhost:3000/menu')
     .then((data) => {
         const cardContent = [...data];
         console.log(data);
@@ -427,8 +464,12 @@ document.addEventListener('DOMContentLoaded', () => {
     offers[0].classList.remove('hide');
     currentSlide.textContent = '01';
     
-    
-    offerSlide(1);
+    // Infinite slider
+    // offerSlide(1);
+
+    //  Clicked slider
+    clickedSlider(1);
+
     offerOn(deadline);
 
 });

@@ -160,42 +160,50 @@ document.addEventListener('DOMContentLoaded', () => {
         offersHide();
         offers[i].classList.add('show', 'fade');
         offers[i].classList.remove('hide');
+        if(i + 1 >= 10) {
+            currentSlide.textContent = i + 1;
+        } else {
+            currentSlide.textContent = '0' + (i + 1);
+        }
+        
+    };
+
+    const sliderMoveRight = (i) => {
+        if(i >= offers.length - 1) {
+            i = 0;
+        } else {
+            i++;
+        }
+        offerMove(i);
+        return i;
+    };
+
+    const sliderMoveLeft = (i) => {
+        if(!i) {
+            i = offers.length - 1;
+        } else {
+            i--;
+        }
+        offerMove(i);
+        return i;
     };
 
     const offerSlide = (init) => {
-        let offerInterval;
         let i = init;
 
         totalSlide.textContent = '0' + offers.length;
-        offerInterval = setInterval(() => {
-            offerMove(i);
-            currentSlide.textContent = '0' + (i + 1);
-            i++;
-            if (i === 4) {
-                i = 0;
-            }
+        setInterval(() => {
+            i = sliderMoveRight(i);
         }, 3000);
     };
 
     const clickedSlider = (init) => {
         let i = init;
         buttonLeft.addEventListener('click', () => {
-            if(!i) {
-                i = offers.length - 1;
-            } else {
-                i--;
-            }
-            offerMove(i);
-            currentSlide.textContent = '0' + (i + 1);
+            i = sliderMoveLeft(i);
         });
         buttonRight.addEventListener('click', () => {
-            if(i >= offers.length - 1) {
-                i = 0;
-            } else {
-                i++;
-            }
-            offerMove(i);
-            currentSlide.textContent = '0' + (i + 1);
+            i = sliderMoveRight(i);
         });
     };
 
@@ -463,12 +471,13 @@ document.addEventListener('DOMContentLoaded', () => {
     offersHide();
     offers[0].classList.remove('hide');
     currentSlide.textContent = '01';
-    
+    totalSlide.textContent = offers.length >= 10 ? offers.length : '0' + offers.length;
+
     // Infinite slider
-    // offerSlide(1);
+    offerSlide(0);
 
     //  Clicked slider
-    clickedSlider(1);
+    // clickedSlider(0);
 
     offerOn(deadline);
 

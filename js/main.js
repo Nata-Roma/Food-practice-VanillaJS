@@ -212,9 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const dotClick = (currentDot, element) => {
-            dotShow(currentDot, element);
-            sliderCount(currentDot);
-            return currentDot;
+        dotShow(currentDot, element);
+        sliderCount(currentDot);
+        return currentDot;
     };
 
     const IntervalSlider = (init) => {
@@ -516,6 +516,86 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    
+    const caloriesCaclulator = () => {
+        
+        let total = document.querySelector('.calculating__result span');
+
+        let activity = 0;
+        let gender = '';
+        let weight;
+        let height;
+        let age;
+
+        total.textContent = '____';
+
+        const dailyCaloriesCalc = () => {
+
+            if (gender === 'male') {
+                const bmr = 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age);
+                const total = (bmr * activity).toFixed(0);
+                return total;
+            }
+    
+            if (gender === 'female') {
+                const bmr = 447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age);
+                const total = (bmr * activity).toFixed(0);
+                return total;
+            }
+        };
+    
+        const buttosFields = (parent) => {
+            const elements = parent.querySelectorAll('div');
+
+            parent.addEventListener('click', (e) => {
+                if (e.target.hasAttribute(`data-gender`)) {
+                    gender = e.target.getAttribute('data-gender');
+                } else {
+                    activity = +e.target.getAttribute('data-activity');
+                }
+                if(e.target !== parent) {
+                    elements.forEach((element) => {
+                        element.classList.remove('calculating__choose-item_active');
+                    });
+                    e.target.classList.add('calculating__choose-item_active');
+                }
+                if (activity && gender && weight && height && age) {
+                    const totalValue = dailyCaloriesCalc();
+                        total.textContent = totalValue;
+                }
+            });
+        };
+
+        const inputFields = (selector) => {
+            const input = document.querySelector(selector);
+
+            input.addEventListener('input', () => {
+                switch (input.getAttribute('id')) {
+                    case 'weight':
+                        weight = +input.value;
+                        break;
+                    case 'height':
+                        height = +input.value;
+                        break;
+                    case 'age':
+                        age = +input.value;
+                        break;
+                }
+                if (activity && gender && weight && height && age) {
+                    const totalValue = dailyCaloriesCalc();
+                        total.textContent = totalValue;
+                }
+            });
+        };
+
+        buttosFields(document.querySelector('#gender'));
+        buttosFields(document.querySelector('#activity'));
+        
+        inputFields('#weight');
+        inputFields('#height');
+        inputFields('#age');
+    };
+
     // Events
     tabWrapper.addEventListener('click', (e) => handleTabClick(e));
 
@@ -555,6 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Moving slider
     movingSlider(0);
 
+    caloriesCaclulator();
     offerOn(deadline);
 
 });

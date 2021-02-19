@@ -58,10 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentWrapper = document.querySelectorAll('.tabcontent');
     const tabWrapper = document.querySelector('.tabheader__items');
     const tabItems = tabWrapper.querySelectorAll('.tabheader__item');
-    const offers = document.querySelectorAll('.offer__slide');
+    const sliderContainer = document.querySelector('.offer__slider');
+    const slideWrapper = document.querySelector('.offer__slider-wrapper');
+    const slideInner = document.querySelector('.offer__slider-inner');
+    const slides = document.querySelectorAll('.offer__slide');
     const currentSlide = document.querySelector('#current');
     const totalSlide = document.querySelector('#total');
-    const buttonLeft = document.querySelector('.offer__slider-prev'); 
+    const buttonLeft = document.querySelector('.offer__slider-prev');
     const buttonRight = document.querySelector('.offer__slider-next');
     const forms = document.querySelectorAll('form');
     const connectUs = document.querySelectorAll('[data-modal]');
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cards rendering
     class CardRender {
-        constructor({title, image, alt, description, price}, parent) {
+        constructor({ title, image, alt, description, price }, parent) {
             this.title = title;
             this.image = image;
             this.alt = alt;
@@ -87,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const element = document.createElement('div');
             element.classList.add("menu__item");
 
-            element.innerHTML =  `
+            element.innerHTML = `
                     <img src=${this.image} alt=${this.alt}}>
                     <h3 class="menu__item-subtitle">Меню "${this.title}"</h3>
                     <div class="menu__item-descr">${this.description}</div>
@@ -103,12 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cardRenderBlock = (cardContent) => {
 
-        for( let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {
             new CardRender(cardContent[i], cardContainer).cardRender();
         }
     };
 
-    
+
     // Tabs, Content, Choise of style
     const handleContentHide = (element) => {
         element.classList.add('hide');
@@ -148,63 +151,141 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Offers Slider
-    const offersHide = () => {
-        offers.forEach((offer) => {
+    // slides Slider
+    const sliderCount = (i) => {
+        if (i + 1 >= 10) {
+            currentSlide.textContent = i + 1;
+        } else {
+            currentSlide.textContent = '0' + (i + 1);
+        }
+    };
+
+    const slideHide = () => {
+        slides.forEach((offer) => {
             offer.classList.add('hide');
             offer.classList.remove('show', 'fade');
         });
     };
 
-    const offerMove = (i) => {
-        offersHide();
-        offers[i].classList.add('show', 'fade');
-        offers[i].classList.remove('hide');
-        if(i + 1 >= 10) {
-            currentSlide.textContent = i + 1;
-        } else {
-            currentSlide.textContent = '0' + (i + 1);
-        }
-        
+    const slideShow = (i) => {
+        slideHide();
+        slides[i].classList.add('show', 'fade');
+        slides[i].classList.remove('hide');
     };
 
-    const sliderMoveRight = (i) => {
-        if(i >= offers.length - 1) {
+    const dotShow = (i, dots) => {
+        dots.forEach((dot) => {
+            dot.style.opacity = 0.5;
+        });
+        dots[i].style.opacity = 1;
+    };
+
+    const sliderMoveRight = (i, theme, dots) => {
+        if (i >= slides.length - 1) {
             i = 0;
         } else {
             i++;
         }
-        offerMove(i);
+
+        if (theme === 'click') {
+            slideShow(i);
+        } else if (theme === 'move') {
+            dotShow(i, dots);
+        }
+        sliderCount(i);
         return i;
     };
 
-    const sliderMoveLeft = (i) => {
-        if(!i) {
-            i = offers.length - 1;
+    const sliderMoveLeft = (i, theme, dots) => {
+        if (!i) {
+            i = slides.length - 1;
         } else {
             i--;
         }
-        offerMove(i);
+        if (theme === 'click') {
+            slideShow(i);
+        } else if (theme === 'move') {
+            dotShow(i, dots);
+        }
+        sliderCount(i);
         return i;
     };
 
-    const offerSlide = (init) => {
-        let i = init;
+    const dotClick = (currentDot, element) => {
+            dotShow(currentDot, element);
+            sliderCount(currentDot);
+            return currentDot;
+    };
 
-        totalSlide.textContent = '0' + offers.length;
+    const IntervalSlider = (init) => {
+        slideHide();
+        let i = init;
+        slides[i].classList.remove('hide');
+        // totalSlide.textContent = '0' + slides.length;
+
         setInterval(() => {
-            i = sliderMoveRight(i);
+            i = sliderMoveRight(i, 'click');
         }, 3000);
     };
 
     const clickedSlider = (init) => {
+        slideHide();
         let i = init;
+        slides[i].classList.remove('hide');
+        // totalSlide.textContent = '0' + slides.length;
+
         buttonLeft.addEventListener('click', () => {
-            i = sliderMoveLeft(i);
+            i = sliderMoveLeft(i, 'click');
         });
         buttonRight.addEventListener('click', () => {
-            i = sliderMoveRight(i);
+            i = sliderMoveRight(i, 'click');
         });
+    };
+
+    const movingSlider = (init) => {
+
+        sliderContainer.style.position = 'relative';
+        const dotsContainer = document.createElement('div');
+        dotsContainer.classList.add('carousel-indicators');
+        for (let j = 0; j < slides.length; j++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            dot.dataset.slide = j;
+            dotsContainer.append(dot);
+        }
+        sliderContainer.append(dotsContainer);
+        const dots = document.querySelectorAll('.dot');
+
+        let i = init;
+        dots[i].style.opacity = 1;
+
+        let width = window.getComputedStyle(slideWrapper).width;
+        width = +width.replace(/\D/g, '');
+        slides.forEach((slide) => {
+            slide.style.width = width + 'px';
+        });
+        slideInner.style.cssText = `display: flex; width: ${width * slides.length}%; transition: 0.5s all ease`;
+        slideWrapper.style.overflow = 'hidden';
+        buttonLeft.addEventListener('click', () => {
+            i = sliderMoveLeft(i, 'move', dots);
+            slideInner.style.transform = `translateX(-${width * i}px)`;
+        });
+        buttonRight.addEventListener('click', () => {
+            i = sliderMoveRight(i, 'move', dots);
+            slideInner.style.transform = `translateX(-${width * i}px)`;
+        });
+        dots.forEach((dot) => {
+            dot.addEventListener('click', () => {
+                const dotNumber = +dot.dataset.slide;
+                i = dotClick(dotNumber, dots);
+                slideInner.style.transform = `translateX(-${width * i}px)`;
+            });
+        });
+
+
+        // let dot = [];
+
+
     };
 
     // Offer Timer
@@ -253,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        if(new Date(offerDeadline) - new Date() > 0) {
+        if (new Date(offerDeadline) - new Date() > 0) {
             secTimer();
             offerTimer = setInterval(secTimer, 1000);
         } else {
@@ -338,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //         // request.send(formData);
 
     //         request.send(JSON.stringify(toJsonObject));
-            
+
     //         request.addEventListener('load', () => {
     //             warningMessage.innerHTML = '';
     //             if(request.status === 200) {
@@ -355,11 +436,11 @@ document.addEventListener('DOMContentLoaded', () => {
     //         form.reset();
     //     });
 
-        
+
     // };
 
-    const postDataToServer = async(url, data) => {
-         // !!! Do not declare headers if FormData using
+    const postDataToServer = async (url, data) => {
+        // !!! Do not declare headers if FormData using
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -405,27 +486,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
             postDataToServer('http://localhost:3000/requests', json)
-            .then((data) => {
-                console.log(data);
-                modalView();
-                showSendResponse(statusMessage.success);
-                warningMessage.remove();
-            })
-            .catch((err) => {
-                console.error(err);
-                modalView();
-                showSendResponse(statusMessage.failure);
-                warningMessage.remove();
-            }).finally(() => {
-                form.reset();
-            });
+                .then((data) => {
+                    console.log(data);
+                    modalView();
+                    showSendResponse(statusMessage.success);
+                    warningMessage.remove();
+                })
+                .catch((err) => {
+                    console.error(err);
+                    modalView();
+                    showSendResponse(statusMessage.failure);
+                    warningMessage.remove();
+                }).finally(() => {
+                    form.reset();
+                });
         });
     };
 
-    const getDataFromServer = async(url) => {
+    const getDataFromServer = async (url) => {
         const response = await fetch(url);
 
-        if(!response.ok) {
+        if (!response.ok) {
             throw new Error(`Could not fetch ${url}, status: ${response.status}`);
         }
 
@@ -452,33 +533,36 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keyup', (e) => handleModalClose(e));
     window.addEventListener('scroll', modalAsPageBottom);
     forms.forEach((form) => postData(form));
-    
+
     // Initial render
 
     getDataFromServer('http://localhost:3000/menu')
-    .then((data) => {
-        const cardContent = [...data];
-        console.log(data);
-        cardRenderBlock(cardContent);
-    }).catch((err) => {
-        console.error('Card content could not be downloaded ', err);
-    });
+        .then((data) => {
+            const cardContent = [...data];
+            console.log(data);
+            cardRenderBlock(cardContent);
+        }).catch((err) => {
+            console.error('Card content could not be downloaded ', err);
+        });
 
     contentWrapper.forEach((item) => {
         handleContentHide(item);
     });
     handleTabContent(tabContent[0], contentWrapper[0]);
-    offersHide();
-    offers[0].classList.remove('hide');
+
     currentSlide.textContent = '01';
-    totalSlide.textContent = offers.length >= 10 ? offers.length : '0' + offers.length;
+    totalSlide.textContent = slides.length >= 10 ? slides.length : '0' + slides.length;
 
     // Infinite slider
-    offerSlide(0);
+    // IntervalSlider(0);
 
     //  Clicked slider
     // clickedSlider(0);
 
+    // Moving slider
+    movingSlider(0);
+
     offerOn(deadline);
 
 });
+

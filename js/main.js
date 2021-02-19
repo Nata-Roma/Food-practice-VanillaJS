@@ -521,31 +521,42 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let total = document.querySelector('.calculating__result span');
 
-        let activity = 0;
-        let gender = '';
+        let activity = 1.375;
+        let gender = 'female';
         let weight;
         let height;
         let age;
+        let totalValue;
 
         total.textContent = '____';
 
         const dailyCaloriesCalc = () => {
+            if (!activity || !gender || !weight || !height || !age) {
+                total.textContent = '____';
+                return;
+            }
 
             if (gender === 'male') {
                 const bmr = 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age);
-                const total = (bmr * activity).toFixed(0);
-                return total;
+                totalValue = Math.round(bmr * activity);
             }
     
             if (gender === 'female') {
                 const bmr = 447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age);
-                const total = (bmr * activity).toFixed(0);
-                return total;
+                totalValue = Math.round(bmr * activity);
             }
+            total.textContent = totalValue;
         };
     
         const buttosFields = (parent) => {
             const elements = parent.querySelectorAll('div');
+            elements.forEach((element) => {
+                if(element.hasAttribute(`data-gender`)) {
+                    elements[0].classList.add('calculating__choose-item_active');
+                } else if(element.hasAttribute(`data-activity`)) {
+                    elements[1].classList.add('calculating__choose-item_active');
+                }
+            });
 
             parent.addEventListener('click', (e) => {
                 if (e.target.hasAttribute(`data-gender`)) {
@@ -559,10 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     e.target.classList.add('calculating__choose-item_active');
                 }
-                if (activity && gender && weight && height && age) {
-                    const totalValue = dailyCaloriesCalc();
-                        total.textContent = totalValue;
-                }
+                    dailyCaloriesCalc();
             });
         };
 
@@ -581,10 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         age = +input.value;
                         break;
                 }
-                if (activity && gender && weight && height && age) {
-                    const totalValue = dailyCaloriesCalc();
-                        total.textContent = totalValue;
-                }
+                    dailyCaloriesCalc();
             });
         };
 

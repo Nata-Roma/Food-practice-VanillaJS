@@ -268,24 +268,17 @@ document.addEventListener('DOMContentLoaded', () => {
         slideWrapper.style.overflow = 'hidden';
         buttonLeft.addEventListener('click', () => {
             i = sliderMoveLeft(i, 'move', dots);
-            slideInner.style.transform = `translateX(-${width * i}px)`;
         });
         buttonRight.addEventListener('click', () => {
             i = sliderMoveRight(i, 'move', dots);
-            slideInner.style.transform = `translateX(-${width * i}px)`;
         });
         dots.forEach((dot) => {
             dot.addEventListener('click', () => {
                 const dotNumber = +dot.dataset.slide;
                 i = dotClick(dotNumber, dots);
-                slideInner.style.transform = `translateX(-${width * i}px)`;
             });
         });
-
-
-        // let dot = [];
-
-
+        slideInner.style.transform = `translateX(-${width * i}px)`;
     };
 
     // Offer Timer

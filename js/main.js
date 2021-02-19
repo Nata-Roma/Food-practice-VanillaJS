@@ -516,17 +516,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    
+    // Daily calories calculator
     const caloriesCaclulator = () => {
         
         let total = document.querySelector('.calculating__result span');
 
-        let activity = 1.375;
-        let gender = 'female';
+        let activity;
+        let gender;
         let weight;
         let height;
         let age;
         let totalValue;
+
+        const dataCalc = JSON.parse(localStorage.getItem(('dataCalc')));
+
+        if (dataCalc && dataCalc.gender) {
+            gender = dataCalc.gender;
+        } else {
+            gender = 'female';
+        }
+        if (dataCalc && dataCalc.activity) {
+            activity = dataCalc.activity;
+        } else {
+            activity = 1.375;
+        }
+
+        localStorage.setItem('dataCalc', JSON.stringify({gender, activity}));
 
         total.textContent = '____';
 
@@ -551,11 +566,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttosFields = (parent) => {
             const elements = parent.querySelectorAll('div');
             elements.forEach((element) => {
-                if(element.hasAttribute(`data-gender`)) {
-                    elements[0].classList.add('calculating__choose-item_active');
-                } else if(element.hasAttribute(`data-activity`)) {
-                    elements[1].classList.add('calculating__choose-item_active');
-                }
+                    if(element.dataset.gender === gender) {
+                        element.classList.add('calculating__choose-item_active');
+                    }
+                    if(+element.dataset.activity === activity) {
+                        element.classList.add('calculating__choose-item_active');
+                    }
             });
 
             parent.addEventListener('click', (e) => {
@@ -564,6 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     activity = +e.target.getAttribute('data-activity');
                 }
+                localStorage.setItem('dataCalc', JSON.stringify({gender, activity}));
                 if(e.target !== parent) {
                     elements.forEach((element) => {
                         element.classList.remove('calculating__choose-item_active');
@@ -578,6 +595,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const input = document.querySelector(selector);
 
             input.addEventListener('input', () => {
+                if(input.value.match(/\D/g)) {
+                    input.style.border = '1px solid red';
+                } else {
+                    input.style.border = 'none';
+                }
+
                 switch (input.getAttribute('id')) {
                     case 'weight':
                         weight = +input.value;

@@ -1,14 +1,14 @@
 import {sliderMoveLeft, sliderMoveRight, dotClick} from './sliderControls';
 
-const sliderMoving = () => {
-    const sliderContainer = document.querySelector('.offer__slider');
-    const slideWrapper = document.querySelector('.offer__slider-wrapper');
-    const slideInner = document.querySelector('.offer__slider-inner');
-    const slides = document.querySelectorAll('.offer__slide');
-    const currentSlide = document.querySelector('#current');
-    const totalSlide = document.querySelector('#total');
-    const buttonLeft = document.querySelector('.offer__slider-prev');
-    const buttonRight = document.querySelector('.offer__slider-next');
+const sliderMoving = ({totalSlides, slideCounter, showingSlide, sliderPrev, sliderNext, innerContainer, outterContainer, sliderOutContainer}) => {
+    const sliderContainer = document.querySelector(sliderOutContainer);
+    const slideWrapper = document.querySelector(outterContainer);
+    const slideInner = document.querySelector(innerContainer);
+    const slides = document.querySelectorAll(totalSlides);
+    const currentSlide = document.querySelector(showingSlide);
+    const totalSlide = document.querySelector(slideCounter);
+    const buttonLeft = document.querySelector(sliderPrev);
+    const buttonRight = document.querySelector(sliderNext);
 
     
     const movingSlider = (init) => {

@@ -1,5 +1,5 @@
-const cards = (cardContent) => {
-    const cardContainer = document.querySelector('.menu__field .container');
+const cards = (cardContent, cardsContainer) => {
+    const cardContainer = document.querySelector(cardsContainer);
 
     class CardRender {
         constructor({ title, image, alt, description, price }, parent) {
@@ -34,7 +34,6 @@ const cards = (cardContent) => {
     }
 
     const cardRenderBlock = (cardContent) => {
-
         for (let i = 0; i < 3; i++) {
             new CardRender(cardContent[i], cardContainer).cardRender();
         }

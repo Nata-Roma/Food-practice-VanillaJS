@@ -1,6 +1,6 @@
 import { tabContent } from './initialData';
 
-const tabs = (contentContainer, tabContainer, tabs) => {
+const tabs = ({contentContainer, tabContainer, tabs}) => {
 
     const contentWrapper = document.querySelectorAll(contentContainer);
     const tabWrapper = document.querySelector(tabContainer);

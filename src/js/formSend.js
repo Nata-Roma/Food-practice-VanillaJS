@@ -1,9 +1,28 @@
 import { restorePagefromModal, modalView } from './modal';
 import {statusMessage} from './initialData';
 
-const formSend = () => {
-    const modal = document.querySelector('.modal');
-    const forms = document.querySelectorAll('form');
+const showSendResponse = (message, modal, modalInnerBox) => {
+    const modalDialog = document.querySelector(modalInnerBox);
+    modalDialog.classList.add('hide');
+    const thanksDialog = document.createElement('div');
+    thanksDialog.classList.add('modal__dialog');
+    thanksDialog.innerHTML = `
+        <div class="modal__content">
+            <div class="modal__close" data-close>&times;</div>
+            <div class="modal__title">${message}</div>
+        </div>
+    `;
+    modal.append(thanksDialog);
+    setTimeout(() => {
+        thanksDialog.remove();
+        modalDialog.classList.remove('hide');
+        restorePagefromModal(modal);
+    }, 4000);
+};
+
+const formSend = ({modalBox, formContainer, modalInner}) => {
+    const modal = document.querySelector(modalBox);
+    const forms = document.querySelectorAll(formContainer);
 
     const postDataToServer = async (url, data) => {
         // !!! Do not declare headers if FormData using
@@ -18,25 +37,7 @@ const formSend = () => {
         return await response.json();
     };
 
-    const postData = (form) => {
-        const showSendResponse = (message) => {
-            const modalDialog = document.querySelector('.modal__dialog');
-            modalDialog.classList.add('hide');
-            const thanksDialog = document.createElement('div');
-            thanksDialog.classList.add('modal__dialog');
-            thanksDialog.innerHTML = `
-                <div class="modal__content">
-                    <div class="modal__close" data-close>&times;</div>
-                    <div class="modal__title">${message}</div>
-                </div>
-            `;
-            modal.append(thanksDialog);
-            setTimeout(() => {
-                thanksDialog.remove();
-                modalDialog.classList.remove('hide');
-                restorePagefromModal();
-            }, 4000);
-        };
+    const postData = (form, modalInnerBox) => {
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -54,22 +55,21 @@ const formSend = () => {
             postDataToServer('http://localhost:3000/requests', json)
                 .then((data) => {
                     console.log(data);
-                    modalView();
-                    showSendResponse(statusMessage.success);
+                    modalView(modal);
+                    showSendResponse(statusMessage.success, modal, modalInnerBox);
                     warningMessage.remove();
                 })
                 .catch((err) => {
                     console.error(err);
-                    modalView();
-                    showSendResponse(statusMessage.failure);
+                    modalView(modal);
+                    showSendResponse(statusMessage.failure, modal, modalInnerBox);
                     warningMessage.remove();
                 }).finally(() => {
                     form.reset();
                 });
         });
     };
-    forms.forEach((form) => postData(form));
-
+    forms.forEach((form) => postData(form, modalInner));
 };
 
 export default formSend;

@@ -1,12 +1,12 @@
 import {slideHide, sliderMoveLeft, sliderMoveRight} from './sliderControls';
 
-const sliderClicked = () => {
+const sliderClicked = ({totalSlides, slideCounter, showingSlide, sliderPrev, sliderNext}) => {
 
-    const slides = document.querySelectorAll('.offer__slide');
-    const currentSlide = document.querySelector('#current');
-    const totalSlide = document.querySelector('#total');
-    const buttonLeft = document.querySelector('.offer__slider-prev');
-    const buttonRight = document.querySelector('.offer__slider-next');
+    const slides = document.querySelectorAll(totalSlides);
+    const currentSlide = document.querySelector(showingSlide);
+    const totalSlide = document.querySelector(slideCounter);
+    const buttonLeft = document.querySelector(sliderPrev);
+    const buttonRight = document.querySelector(sliderNext);
 
     const clickedSlider = (init) => {
         slideHide();

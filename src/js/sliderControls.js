@@ -1,5 +1,3 @@
-// const sliderControls = () => {
-
 const slides = document.querySelectorAll('.offer__slide');
 const currentSlide = document.querySelector('#current');
 
@@ -67,11 +65,3 @@ export const dotClick = (currentDot, element) => {
     sliderCount(currentDot);
     return currentDot;
 };
-// };
-
-// module.exports = sliderControls;
-
-// module.exports.slideHide = slideHide;
-// module.exports.dotClick = dotClick;
-// module.exports.sliderMoveRight = sliderMoveRight;
-// module.exports.sliderMoveLeft = sliderMoveLeft;

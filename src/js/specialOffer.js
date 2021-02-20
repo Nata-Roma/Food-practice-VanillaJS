@@ -1,4 +1,4 @@
-const specialOffer = (deadline) => {
+const specialOffer = ({deadline, offerDays, offerHours, offerMinutes, offerSecunds}) => {
 
 
     const getTime = (offerEnd) => {
@@ -25,12 +25,12 @@ const specialOffer = (deadline) => {
         return `0${num}`;
     };
 
-    const offerOn = (offerDeadline) => {
-        const offerEnd = new Date(offerDeadline);
-        const days = document.querySelector('#days');
-        const hours = document.querySelector('#hours');
-        const minutes = document.querySelector('#minutes');
-        const seconds = document.querySelector('#seconds');
+    const offerOn = ({deadline, offerDays, offerHours, offerMinutes, offerSecunds}) => {
+        const offerEnd = new Date(deadline);
+        const days = document.querySelector(offerDays);
+        const hours = document.querySelector(offerHours);
+        const minutes = document.querySelector(offerMinutes);
+        const seconds = document.querySelector(offerSecunds);
         let offerTimer;
 
         const secTimer = () => {
@@ -46,7 +46,7 @@ const specialOffer = (deadline) => {
             }
         };
 
-        if (new Date(offerDeadline) - new Date() > 0) {
+        if (new Date(deadline) - new Date() > 0) {
             secTimer();
             offerTimer = setInterval(secTimer, 1000);
         } else {
@@ -56,7 +56,7 @@ const specialOffer = (deadline) => {
             seconds.textContent = '--';
         }
     };
-    offerOn(deadline);
+    offerOn({deadline, offerDays, offerHours, offerMinutes, offerSecunds});
 };
 
 export default specialOffer;

@@ -1,6 +1,8 @@
-const caloriesCaclulator = () => {
+const caloriesCaclulator = ({
+        totalLine, buttonGender, buttonActivity, inputWeight, inputHeight, inputAge
+    }) => {
         
-    let total = document.querySelector('.calculating__result span');
+    let total = document.querySelector(totalLine);
 
     let activity;
     let gender;
@@ -31,12 +33,10 @@ const caloriesCaclulator = () => {
             total.textContent = '____';
             return;
         }
-
         if (gender === 'male') {
             const bmr = 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age);
             totalValue = Math.round(bmr * activity);
         }
-
         if (gender === 'female') {
             const bmr = 447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age);
             totalValue = Math.round(bmr * activity);
@@ -97,12 +97,12 @@ const caloriesCaclulator = () => {
         });
     };
 
-    buttosFields(document.querySelector('#gender'));
-    buttosFields(document.querySelector('#activity'));
+    buttosFields(document.querySelector(buttonGender));
+    buttosFields(document.querySelector(buttonActivity));
     
-    inputFields('#weight');
-    inputFields('#height');
-    inputFields('#age');
+    inputFields(inputWeight);
+    inputFields(inputHeight);
+    inputFields(inputAge);
 };
 
 export default caloriesCaclulator;

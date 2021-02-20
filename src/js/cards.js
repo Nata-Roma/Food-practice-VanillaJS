@@ -42,4 +42,4 @@ const cards = (cardContent) => {
     cardRenderBlock(cardContent);
 };
 
-module.exports = cards;
+export default cards;

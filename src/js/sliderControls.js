@@ -1,4 +1,4 @@
-const sliderControls = () => {
+// const sliderControls = () => {
 
 const slides = document.querySelectorAll('.offer__slide');
 const currentSlide = document.querySelector('#current');
@@ -11,27 +11,27 @@ const sliderCount = (i) => {
     }
 };
 
-const slideHide = () => {
+export const slideHide = () => {
     slides.forEach((offer) => {
         offer.classList.add('hide');
         offer.classList.remove('show', 'fade');
     });
 };
 
-const slideShow = (i) => {
+export const slideShow = (i) => {
     slideHide();
     slides[i].classList.add('show', 'fade');
     slides[i].classList.remove('hide');
 };
 
-const dotShow = (i, dots) => {
+export const dotShow = (i, dots) => {
     dots.forEach((dot) => {
         dot.style.opacity = 0.5;
     });
     dots[i].style.opacity = 1;
 };
 
-const sliderMoveRight = (i, theme, dots) => {
+export const sliderMoveRight = (i, theme, dots) => {
     if (i >= slides.length - 1) {
         i = 0;
     } else {
@@ -47,7 +47,7 @@ const sliderMoveRight = (i, theme, dots) => {
     return i;
 };
 
-const sliderMoveLeft = (i, theme, dots) => {
+export const sliderMoveLeft = (i, theme, dots) => {
     if (!i) {
         i = slides.length - 1;
     } else {
@@ -62,14 +62,14 @@ const sliderMoveLeft = (i, theme, dots) => {
     return i;
 };
 
-const dotClick = (currentDot, element) => {
+export const dotClick = (currentDot, element) => {
     dotShow(currentDot, element);
     sliderCount(currentDot);
     return currentDot;
 };
-};
+// };
 
-module.exports = sliderControls;
+// module.exports = sliderControls;
 
 // module.exports.slideHide = slideHide;
 // module.exports.dotClick = dotClick;

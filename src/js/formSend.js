@@ -1,10 +1,8 @@
+import { restorePagefromModal, modalView } from './modal';
+import {statusMessage} from './initialData';
+
 const formSend = () => {
-    const statusMessage = {
-        loading: '/src/img/form/spinner.svg',
-        success: 'Thank you! We will connect to you soon',
-        failure: 'Something goes wrong',
-    };
-    
+    const modal = document.querySelector('.modal');
     const forms = document.querySelectorAll('form');
 
     const postDataToServer = async (url, data) => {
@@ -71,7 +69,7 @@ const formSend = () => {
         });
     };
     forms.forEach((form) => postData(form));
-    
+
 };
 
-module.exports = formSend;
+export default formSend;

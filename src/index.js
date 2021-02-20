@@ -4,39 +4,33 @@
 
 const deadline = '2021-02-21';
 
-    
+import sliderInterval from './js/sliderInterval';
+// import sliderClicked from './js/sliderClicked';
+// import sliderMoving from './js/sliderMoving';
+
+import modalWindow from './js/modal';
+import formSend from './js/formSend';
+import specialOffer from './js/specialOffer';
+import tabs from './js/tabs';
+// import cards from './js/cards';
+import caloriesCaclulator from './js/caloriesCaclulator';
+import getInitialData from './js/getInitialData';
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const cards = require('./js/cards');
-    require('./js/tabs')();
-    // require('./js/sliderInterval')(); //Infinite slider
-    // require('./js/sliderClicked')();    //Clicked slider
-    require('./js/sliderMoving')();     //Moving slider
-    const specialOffer = require('./js/specialOffer');
-    require('./js/caloriesCaclulator')();
-    require('./js/modal')();
-    require('./js/formSend')();
 
-    const getDataFromServer = async (url) => {
-        const response = await fetch(url);
+    getInitialData();
 
-        if (!response.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${response.status}`);
-        }
+    tabs();
+    caloriesCaclulator();
 
-        return await response.json();
-    };
-
-    getDataFromServer('http://localhost:3000/menu')
-        .then((data) => {
-            const cardContent = [...data];
-            console.log(data);
-            cards(cardContent);
-        }).catch((err) => {
-            console.error('Card content could not be downloaded ', err);
-        });
-
+    sliderInterval();
+    
+    // sliderClicked();
+    // sliderMoving();
+    modalWindow();
+    formSend();
     specialOffer(deadline);
 
 });

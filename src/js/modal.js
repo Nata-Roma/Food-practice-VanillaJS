@@ -1,19 +1,19 @@
-const modal = () => {
-    const modal = document.querySelector('.modal');
-    const connectUs = document.querySelectorAll('[data-modal]');
+const modal = document.querySelector('.modal');
+const connectUs = document.querySelectorAll('[data-modal]');
 
-const modalView = () => {
-        modal.classList.add('show');
-        modal.classList.remove('hide');
-        document.body.style.overflow = 'hidden';
-    };
+export const modalView = () => {
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+};
 
-    const restorePagefromModal = () => {
-        modal.classList.add('hide');
-        modal.classList.remove('show');
-        document.body.style.overflow = '';
-    };
+export const restorePagefromModal = () => {
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+};
 
+const modalWindow = () => {
     const handleModalClose = (e) => {
         if (e.target === modal || e.target.hasAttribute('data-close') || e.key === 'Escape' || e.key === 'Esc') {
             restorePagefromModal();
@@ -35,6 +35,8 @@ const modalView = () => {
     modal.addEventListener('click', (e) => handleModalClose(e));
     document.addEventListener('keyup', (e) => handleModalClose(e));
     window.addEventListener('scroll', modalAsPageBottom);
+
 };
 
-module.exports = modal;
+export default modalWindow;
+

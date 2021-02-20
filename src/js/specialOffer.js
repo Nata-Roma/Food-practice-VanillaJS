@@ -59,4 +59,4 @@ const specialOffer = (deadline) => {
     offerOn(deadline);
 };
 
-module.exports = specialOffer;
+export default specialOffer;

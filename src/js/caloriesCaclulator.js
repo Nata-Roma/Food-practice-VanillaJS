@@ -105,4 +105,4 @@ const caloriesCaclulator = () => {
     inputFields('#age');
 };
 
-module.exports = caloriesCaclulator;
+export default caloriesCaclulator;

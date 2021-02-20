@@ -18,7 +18,7 @@ export const tabContent = [
 ];
 
 export const statusMessage = {
-    loading: '/src/img/form/spinner.svg',
+    loading: './src/img/form/spinner.svg',
     success: 'Thank you! We will connect to you soon',
     failure: 'Something goes wrong',
 };

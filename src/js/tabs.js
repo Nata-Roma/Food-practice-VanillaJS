@@ -1,10 +1,10 @@
 import { tabContent } from './initialData';
 
-const tabs = () => {
+const tabs = (contentContainer, tabContainer, tabs) => {
 
-    const contentWrapper = document.querySelectorAll('.tabcontent');
-    const tabWrapper = document.querySelector('.tabheader__items');
-    const tabItems = tabWrapper.querySelectorAll('.tabheader__item');
+    const contentWrapper = document.querySelectorAll(contentContainer);
+    const tabWrapper = document.querySelector(tabContainer);
+    const tabItems = tabWrapper.querySelectorAll(tabs);
 
     // Tabs, Content, Choise of style
     const handleContentHide = (element) => {

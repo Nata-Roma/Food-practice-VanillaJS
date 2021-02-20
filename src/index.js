@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     getInitialData();
 
-    tabs();
+    tabs('.tabcontent', '.tabheader__items', '.tabheader__item');
     caloriesCaclulator();
 
     sliderInterval();

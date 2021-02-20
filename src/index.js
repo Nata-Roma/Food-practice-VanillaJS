@@ -4,19 +4,19 @@
 
 const tabContent = [
     {
-        image: 'img/tabs/vegy.jpg',
+        image: 'src/img/tabs/vegy.jpg',
         description: 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Для людей, которые интересуются спортом; активных и здоровых. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
     },
     {
-        image: 'img/tabs/elite.jpg',
+        image: 'src/img/tabs/elite.jpg',
         description: 'Меню “Премиум” - мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
     },
     {
-        image: 'img/tabs/post.jpg',
+        image: 'src/img/tabs/post.jpg',
         description: 'Наше специальное “Постное меню” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения. Полная гармония с собой и природой в каждом элементе! Все будет Ом!',
     },
     {
-        image: 'img/tabs/hamburger.jpg',
+        image: 'src/img/tabs/hamburger.jpg',
         description: 'Меню "Сбалансированное" - это соответствие вашего рациона всем научным рекомендациям. Мы тщательно просчитываем вашу потребность в к/б/ж/у и создаем лучшие блюда для вас.',
     },
 ];
@@ -45,10 +45,10 @@ const tabContent = [
 //     },
 // ];
 
-const deadline = '2021-02-16';
+const deadline = '2021-02-20';
 
 const statusMessage = {
-    loading: '/img/form/spinner.svg',
+    loading: '/src/img/form/spinner.svg',
     success: 'Thank you! We will connect to you soon',
     failure: 'Something goes wrong',
 };
@@ -256,29 +256,34 @@ document.addEventListener('DOMContentLoaded', () => {
         sliderContainer.append(dotsContainer);
         const dots = document.querySelectorAll('.dot');
 
-        let i = init;
-        dots[i].style.opacity = 1;
+        let index = init;
+        dots[index].style.opacity = 1;
 
         let width = window.getComputedStyle(slideWrapper).width;
         width = +width.replace(/\D/g, '');
+        // width = +width.slice(0, width.length - 2);
+
         slides.forEach((slide) => {
             slide.style.width = width + 'px';
         });
         slideInner.style.cssText = `display: flex; width: ${width * slides.length}%; transition: 0.5s all ease`;
         slideWrapper.style.overflow = 'hidden';
         buttonLeft.addEventListener('click', () => {
-            i = sliderMoveLeft(i, 'move', dots);
+            index = sliderMoveLeft(index, 'move', dots);
+            slideInner.style.transform = `translateX(-${width * index}px)`;
         });
         buttonRight.addEventListener('click', () => {
-            i = sliderMoveRight(i, 'move', dots);
+            index = sliderMoveRight(index, 'move', dots);
+            slideInner.style.transform = `translateX(-${width * index}px)`;
         });
         dots.forEach((dot) => {
             dot.addEventListener('click', () => {
                 const dotNumber = +dot.dataset.slide;
-                i = dotClick(dotNumber, dots);
+                index = dotClick(dotNumber, dots);
+                slideInner.style.transform = `translateX(-${width * index}px)`;
             });
+            
         });
-        slideInner.style.transform = `translateX(-${width * i}px)`;
     };
 
     // Offer Timer

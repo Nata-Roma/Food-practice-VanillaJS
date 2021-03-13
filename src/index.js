@@ -2,7 +2,7 @@
     'use strict';
 }());
 
-const deadline = '2021-02-22';
+const deadline = '2021-04-22';
 
 import sliderInterval from './js/sliderInterval';
 // import sliderClicked from './js/sliderClicked';
